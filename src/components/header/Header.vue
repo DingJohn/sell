@@ -6,7 +6,10 @@
 
 <script>
   export default {
-    name: "First"
+    name: "First",
+    method(){
+      this.$fetch()
+    }
   }
 </script>
 
