@@ -1,6 +1,6 @@
 <template>
   <div>
-    I'am footer vue
+    I'm seller
   </div>
 </template>
 
