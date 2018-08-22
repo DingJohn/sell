@@ -1,15 +1,12 @@
 <template>
   <div>
-    I am header vue
+    I'm header
   </div>
 </template>
 
 <script>
   export default {
-    name: "First",
-    method(){
-      this.$fetch()
-    }
+    name: "First"
   }
 </script>
 
