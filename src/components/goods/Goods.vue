@@ -1,6 +1,6 @@
 <template>
   <div>
-    I am content vue
+    I'm goods
   </div>
 </template>
 
