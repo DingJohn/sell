@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <v-header></v-header>
+    <v-header :seller="seller"></v-header>
     <div class="table">
       <div class="table-item">
         <router-link to="/goods">商品</router-link>
@@ -18,17 +18,34 @@
 
 <script>
 
+  import httpAxios from './base/http/httpAxios'
+  import apiSell from './base/api/apiSell'
   import Header from './components/header/Header'
 
   export default {
     name: 'App',
     components: {
       'v-header': Header
+    },
+    data() {
+      return {
+        seller: 'loading'
+      }
+    },
+    created() {
+      httpAxios(apiSell.getSell, {"srChannel": "h5",})
+        .then((res) => {
+          this.seller = res.data.seller
+          console.log(res.data.seller)
+        }, (error) => {
+          console.log(error)
+        })
     }
   }
 </script>
 
 <style>
+
   .table {
     display: flex;
     width: 100%;
