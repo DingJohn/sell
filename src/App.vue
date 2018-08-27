@@ -44,27 +44,23 @@
   }
 </script>
 
-<style>
+<style lang="stylus">
 
-  .table {
-    display: flex;
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
-    border-bottom: 1px solid rgba(7, 17, 27, 0.1);
-  }
+  @import "common/stylus/mixin.styl"
 
-  .table .table-item {
-    flex: 1;
-    text-align: center;
-  }
+  .table
+    display flex
+    widows: 100%
+    height: 40px
+    line-height 40px
+    border-1px(rgba(7, 17, 27, .1))
+    .table-item
+      flex 1
+      text-align center
+      .active
+        color rgb(240, 20, 20)
+      a
+        display block
+        font-size 14px
 
-  .table-item a {
-    display: block;
-    font-size: 14px;
-  }
-
-  .table-item .active {
-    color: rgb(240, 20, 20);
-  }
 </style>
