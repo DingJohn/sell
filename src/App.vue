@@ -46,6 +46,7 @@
 
 <style lang="stylus">
 
+  @import "common/stylus/icon.styl"
   @import "common/stylus/mixin.styl"
 
   .table
