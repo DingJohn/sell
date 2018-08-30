@@ -1,15 +1,106 @@
 <template>
-  <div class="star">
-    
+  <div class="star" :class="starType">
+    <span v-for="itemClass in itemClasses" class="star-item" :class="itemClass"></span>
   </div>
 </template>
 
 <script>
+
+  const LENGTH = 5
+  const STAR_ON = 'on'
+  const STAR_OFF = 'off'
+  const STAR_HALF = 'half'
+
   export default {
-    name: "Star"
+    name: "Star",
+    props: {
+      size: Number,
+      score: Number
+    },
+    computed: {
+      starType() {
+        console.log('size:' + this.size + ",score:" + this.score)
+        return 'star' + this.size
+      },
+      itemClasses() {
+
+        let result = []
+        let score = Math.floor(this.score * 2) / 2
+        let fractional = score % 1 !== 0
+        let score_on = Math.floor(score)
+
+        for (let i = 0; i < score_on; i++) {
+          result.push(STAR_ON)
+        }
+
+        if (fractional) {
+          result.push(STAR_HALF)
+        }
+
+        while (result.length < LENGTH) {
+          result.push(STAR_OFF)
+        }
+
+        return result
+
+      }
+    }
   }
 </script>
 
-<style scoped>
+<style lang="stylus">
+
+  @import "../../../src/common/stylus/mixin.styl"
+
+  .star
+    font-size 0
+    .star-item
+      display inline-block
+      background-repeat none
+
+  &.star48
+    .star-item
+      width 20px
+      height 20px
+      margin-right 22px
+      background-size 20px 20px
+      &:last-child
+        margin-right 0
+      &.on
+        bg-image('star48_on')
+      &.half
+        bg-image('star48_half')
+      &.off
+        bg-image('star48_off')
+
+  .star36
+    .star-item
+      width 15px
+      height 15px
+      margin-right 6px
+      background-size 15px 15px
+      &:last-child
+        margin-right 0
+      .on
+        bg-image('star36_on')
+      .half
+        bg-image('star36_half')
+      .off
+        bg-image('star36_off')
+
+  .star24
+    .star-item
+      width 10px
+      height 10px
+      margin-right 3px
+      background-size 10px 10px
+      &:last-child
+        margin-right 0
+      .on
+        bg-image('star24_on')
+      .half
+        bg-image('star24_half')
+      .off
+        bg-image('star24_off')
 
 </style>
