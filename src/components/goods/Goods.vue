@@ -2,7 +2,7 @@
   <div class="goods">
     <div class="left-wrapper" ref="menuWrapper">
       <ul>
-        <li v-for="item in goods" class="item">
+        <li v-for="(item,index) in goods" class="item" :class="{ 'current':currentIndex === index }">
           <span class="text border-1px">
             <span v-if="item.type > 0" class="icon" :class="classMap[item.type]"></span>
           {{ item.name }}</span>
@@ -11,7 +11,7 @@
     </div>
     <div class="right-wrapper" ref="goodWrapper">
       <ul>
-        <li v-for="goods in goods" class="item-goods">
+        <li v-for="goods in goods" class="item-goods" ref="foodList">
           <span class="goods-type">{{ goods.name }}</span>
           <ul>
             <li v-for="food in goods.foods" class="item-food">
@@ -50,26 +50,50 @@
     props: {
       data: {}
     },
+    data() {
+      return {
+        listHeight: [],
+        scrollY: 0,
+        currentIndex: 0
+      }
+    },
     created() {
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
+    },
+    mounted() {
+      this.$nextTick(() => {
+        this._initScroll()
+        this._calculateHeight()
+      })
     },
     components: {
       'v-regulation': Regulation
     },
     computed: {
       goods: function () {
-        let goods = this.data.goods
-        this.$nextTick(() => {
-          this._initScroll()
-        })
-        return goods
+        return this.data.goods
       }
     },
     methods: {
       _initScroll() {
+        // 初始化滚动效果
+
         // 如果不加 click: true，则该滚动目录下的所有组件都不能点击
         this.menuScroll = new BScroll(this.$refs.menuWrapper, {click: true})
         this.goodScroll = new BScroll(this.$refs.goodWrapper, {click: true})
+        this.goodScroll.on('scroll', (pos) => {
+          console.log("scroll:===>", pos.y)
+        })
+      },
+      _calculateHeight() {
+        //测量 goodWrapper 的高度
+        let foodList = this.$refs.goodWrapper.getElementsByClassName("item-goods")
+        let height = 0
+        for (let i = 0; i < foodList.length; i++) {
+          let item = foodList[i]
+          height += item.clientHeight
+          this.listHeight.push(height)
+        }
       }
     }
   }
@@ -93,7 +117,15 @@
       background #f3f5f7
       .item
         display table
-        margin 0 12px
+        padding 0 12px
+        &.current
+          z-index 10
+          margin-top -1px
+          position relative
+          background: #fff
+          font-weight: 700
+          .text
+            border-none()
         .text
           width 56px
           height 54px
@@ -196,7 +228,7 @@
               color rgb(147, 153, 159)
               text-decoration line-through
         .regulation
-          right 0px
+          right 0
           bottom 18px
           position absolute
 
