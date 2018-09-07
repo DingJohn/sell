@@ -2,7 +2,8 @@
   <div class="goods">
     <div class="left-wrapper" ref="menuWrapper">
       <ul>
-        <li v-for="(item,index) in goods" class="item" :class="{ 'current':currentIndex === index }">
+        <li v-for="(item,index) in goods" class="item" :class="{ 'current':currentIndex === index }"
+            @click="selectMenu(index,$event)">
           <span class="text border-1px">
             <span v-if="item.type > 0" class="icon" :class="classMap[item.type]"></span>
           {{ item.name }}</span>
@@ -11,7 +12,7 @@
     </div>
     <div class="right-wrapper" ref="goodWrapper">
       <ul>
-        <li v-for="goods in goods" class="item-goods" ref="foodList">
+        <li v-for="goods in goods" class="item-goods">
           <span class="goods-type">{{ goods.name }}</span>
           <ul>
             <li v-for="food in goods.foods" class="item-food">
@@ -37,12 +38,14 @@
         </li>
       </ul>
     </div>
+    <v-shopCart></v-shopCart>
   </div>
 </template>
 
 <script>
 
   import Regulation from '../regulation/Regulation'
+  import ShopCart from '../shopcart/ShopCart'
   import BScroll from 'better-scroll'
 
   export default {
@@ -53,36 +56,61 @@
     data() {
       return {
         listHeight: [],
-        scrollY: 0,
-        currentIndex: 0
+        scrollY: 0
       }
     },
     created() {
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
     },
     mounted() {
-      this.$nextTick(() => {
-        this._initScroll()
-        this._calculateHeight()
-      })
     },
     components: {
-      'v-regulation': Regulation
+      'v-regulation': Regulation,
+      'v-shopCart': ShopCart
     },
     computed: {
-      goods: function () {
-        return this.data.goods
+      goods() {
+        let goods = this.data.goods
+        this.$nextTick(() => {
+          this._initScroll()
+          this._calculateHeight()
+        })
+        return goods
+      },
+      currentIndex() {
+        for (let i = 0; i < this.listHeight.length; i++) {
+          let height1 = this.listHeight[i]
+          let height2 = this.listHeight[i + 1]
+
+          if (this.scrollY >= height1 && this.scrollY < height2) {
+            return i + 1
+          }
+        }
+        return 0
       }
     },
     methods: {
+      selectMenu(index, event) {
+        if (!event._constructed) {
+          //如果不存此属性，则表示该点击事件是原生的点击事件，则不执行以下的函数
+          return
+        }
+        let element = this.$refs.goodWrapper.getElementsByClassName("item-goods")
+        this.goodScroll.scrollToElement(element[index], 300)
+      },
       _initScroll() {
         // 初始化滚动效果
 
         // 如果不加 click: true，则该滚动目录下的所有组件都不能点击
-        this.menuScroll = new BScroll(this.$refs.menuWrapper, {click: true})
-        this.goodScroll = new BScroll(this.$refs.goodWrapper, {click: true})
+        this.menuScroll = new BScroll(this.$refs.menuWrapper, {
+          click: true
+        })
+        this.goodScroll = new BScroll(this.$refs.goodWrapper, {
+          click: true,
+          probeType: 3
+        })
         this.goodScroll.on('scroll', (pos) => {
-          console.log("scroll:===>", pos.y)
+          this.scrollY = -Math.floor(pos.y)
         })
       },
       _calculateHeight() {
