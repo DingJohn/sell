@@ -19,7 +19,6 @@
     },
     computed: {
       starType() {
-        console.log('size:' + this.size + ",score:" + this.score)
         return 'star' + this.size
       },
       itemClasses() {
