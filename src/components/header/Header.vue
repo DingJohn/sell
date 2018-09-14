@@ -30,20 +30,48 @@
     <div class="background">
       <img :src="seller.avatar">
     </div>
-    <div class="detail" v-show="detailShow">
-      <div class="detail-wrapper">
-        <div class="detail-main">
-          <p>{{ seller.bulletin }}</p>
+    <transition name="fade">
+      <div class="detail" v-show="detailShow">
+        <div class="detail-wrapper">
+          <div class="detail-main">
+            <h1>{{ seller.name }}</h1>
+            <div class="star-wrapper">
+              <v-star :size="48" :score="seller.score"></v-star>
+            </div>
+            <div v-if="seller.supports" class="title-wrapper">
+              <div class="line"></div>
+              <div class="text">优惠信息</div>
+              <div class="line"></div>
+            </div>
+            <div v-if="seller.supports" class="supports-wrapper">
+              <ul>
+                <li class="item-supports" v-for="item in seller.supports">
+                  <span class="icon" :class="classMap[item.type]"></span>
+                  <span class="text">{{ item.description }}</span>
+                </li>
+              </ul>
+            </div>
+            <div v-if="seller.bulletin" class="title-wrapper">
+              <div class="line"></div>
+              <div class="text">商家公告</div>
+              <div class="line"></div>
+            </div>
+            <div v-if="seller.bulletin" class="bulletin">
+              <p class="content">{{ seller.bulletin }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="detail-close" @click="hideDetail">
+          <i class="icon-close"></i>
         </div>
       </div>
-      <div class="detail-close" @click="hideDetail">
-        <i class="icon-close"></i>
-      </div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <script>
+
+  import Star from '../star/Star'
 
   export default {
     name: "First",
@@ -55,6 +83,9 @@
       return {
         detailShow: false
       }
+    },
+    components: {
+      'v-star': Star
     },
     methods: {
       showDetail() {
@@ -186,25 +217,95 @@
       width 100%
       height 100%
       position absolute
-      blur 10px
+      filter: blur(10px)
       img
         width 100%
         height 100%
     .detail
       top 0
       left 0
-      blur 10px
       width 100%
       height 100%
       z-index 100
       overflow auto
       position fixed
+      opacity 1
+      backdrop-filter blur(10px)
       background-color rgba(7, 17, 27, .8)
+      &.fade-enter-active, &.fade-leave-active
+        transition: all 0.5s
+      &.fade-enter, &.fade-leave-active
+        opacity: 0
+        background: rgba(7, 17, 27, 0)
       .detail-wrapper
         min-height 100%
         .detail-main
           padding-top 64px
+          text-align center
           padding-bottom 96px
+          h1
+            font-size 16px
+            font-weight 70
+            line-height 16px
+          .star-wrapper
+            margin 16px auto 28px auto
+          .title-wrapper
+            width 80%
+            display flex
+            margin 0 auto 24px auto
+            .line
+              flex 1
+              margin-bottom 6px
+              border-bottom 1px solid rgba(255, 255, 255, .2)
+            .text
+              margin 0 12px
+              font-size 14px
+              font-weight 700
+              line-height 14px
+              color rgb(255, 255, 255)
+          .supports-wrapper
+            width 80%
+            text-align left
+            margin 0 auto 28px auto
+            .item-supports
+              font-size 0
+              margin 0 12px
+              .icon
+                width 16px
+                height 16px
+                vertical-align top
+                margin-bottom 12px
+                display inline-block
+                background-size 16px 16px
+                background-repeat no-repeat
+                :last-child
+                  margin-bottom 0
+              .decrease
+                bg-image('decrease_2')
+              .discount
+                bg-image('discount_2')
+              .guarantee
+                bg-image('guarantee_2')
+              .invoice
+                bg-image('invoice_2')
+              .special
+                bg-image('special_2')
+              .text
+                font-size 12px
+                margin-left 6px
+                font-weight 200
+                line-height 16px
+                color rgb(255, 255, 255)
+          .bulletin
+            width 80%
+            margin 0 auto
+            .content
+              padding 0 12px
+              text-align left
+              font-size 12px
+              font-weight 200
+              line-height 24px
+              color rgb(255, 255, 255)
       .detail-close
         width 32px
         height 32px
