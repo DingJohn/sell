@@ -1,18 +1,18 @@
 <template>
   <div class="shop-cart">
-    <div v-if="seller !== undefined" class="content">
+    <div class="content">
       <div class="content-left">
         <div class="logo-wrapper">
-          <div class="logo" :class="{ 'height-light': account > 0 }">
-            <i class="icon-shopping_cart" :class="{ 'height-light': account > 0}"></i>
+          <div class="logo" :class="{ 'height-light': count > 0 }">
+            <i class="icon-shopping_cart" :class="{ 'height-light': count > 0}"></i>
           </div>
-          <div v-show="account > 0" class="account">{{ account }}</div>
+          <div v-show="count > 0" class="count">{{ count }}</div>
         </div>
-        <div class="price-wrapper" :class="{ 'height-light': account > 0 }">¥{{ totalPrice }}元</div>
-        <div class="desc-wrapper">另需配送费¥{{ seller.deliveryPrice }}元</div>
+        <div class="price-wrapper" :class="{ 'height-light': count > 0 }">¥{{ totalPrice }}元</div>
+        <div class="desc-wrapper">另需配送费¥{{ this.deliveryPrice }}元</div>
       </div>
       <div class="content-right">
-        <div class="pay">¥{{ seller.minPrice }}起送</div>
+        <div class="pay" :class="descClass">{{ priceDesc }}</div>
       </div>
     </div>
   </div>
@@ -22,42 +22,50 @@
   export default {
     name: "ShopCart",
     props: {
-      data: {
-        type: Object,
-        default: {}
-      },
+      minPrice: 0,
+      deliveryPrice: 0,
       selectFoods: {
         type: Array,
         default() {
           return [
             {
               price: 0,
-              account: 0
+              count: 0
             }
           ]
         }
       }
     },
-    data() {
-      return {}
-    },
     computed: {
-      seller() {
-        return this.data.seller
-      },
       totalPrice() {
         let totalPrice = 0
         this.selectFoods.forEach((food) => {
-          totalPrice += food.price * food.account
+          totalPrice += food.price * food.count
         })
         return totalPrice
       },
-      account() {
-        let account = 0
+      count() {
+        let count = 0
         this.selectFoods.forEach((food) => {
-          account += food.account
+          count += food.count
         })
-        return account
+        return count
+      },
+      priceDesc() {
+        if (this.totalPrice === 0) {
+          return `¥${this.minPrice}元起送`
+        } else if (this.totalPrice < this.minPrice) {
+          return `还差¥${this.minPrice - this.totalPrice}起送`
+        } else {
+          return `去结算`
+        }
+      },
+      descClass() {
+        if (this.totalPrice < this.minPrice) {
+          return `no-enough`
+        } else {
+          return `enough`
+        }
       }
     }
   }
@@ -103,7 +111,7 @@
               line-height 44px
               &.height-light
                 color rgb(255, 255, 255)
-        .account
+        .count
           top 0
           right 0
           width 24px
@@ -142,6 +150,10 @@
           font-size 12px
           font-weight 700
           line-height 48px
-          background-color rgb(128, 133, 138)
+          &.no-enough
+            background rgb(128, 133, 138)
+          &.enough
+            background rgb(0, 180, 60)
+            color #fff
 
 </style>
