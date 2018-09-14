@@ -1,13 +1,13 @@
 <template>
-    <div>
-      I'm ratings
-    </div>
+  <div>
+    ratings
+  </div>
 </template>
 
 <script>
-    export default {
-        name: "Ratings"
-    }
+  export default {
+    name: "Ratings"
+  }
 </script>
 
 <style scoped>
