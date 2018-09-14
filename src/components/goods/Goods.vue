@@ -32,18 +32,21 @@
                   <span v-show="food.oldPrice" class="old-price">¥{{ food.oldPrice }}</span>
                 </div>
               </div>
-              <v-regulation class="regulation"></v-regulation>
+              <v-regulation class="regulation" :food="food"></v-regulation>
             </li>
           </ul>
         </li>
       </ul>
     </div>
-    <v-shopCart></v-shopCart>
+    <v-shopCart :minPrice="seller.minPrice" :deliveryPrice="seller.deliveryPrice"
+                :selectFoods="selectFoods"></v-shopCart>
   </div>
 </template>
 
 <script>
 
+  import httpAxios from '../../base/http/httpAxios'
+  import apiModule from '../../base/api/apiModule'
   import Regulation from '../regulation/Regulation'
   import ShopCart from '../shopcart/ShopCart'
   import BScroll from 'better-scroll'
@@ -51,42 +54,53 @@
   export default {
     name: "Content",
     props: {
-      data: {}
+      seller: {}
     },
     data() {
       return {
+        goods: [],
         listHeight: [],
         scrollY: 0
       }
     },
     created() {
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
-    },
-    mounted() {
+      httpAxios(apiModule.getGoods, {"srChannel": "h5",})
+        .then((res) => {
+          this.goods = res
+          this.$nextTick(() => {
+            this._initScroll()
+            this._calculateHeight()
+          })
+        }, (error) => {
+          console.log(error)
+        })
     },
     components: {
       'v-regulation': Regulation,
       'v-shopCart': ShopCart
     },
     computed: {
-      goods() {
-        let goods = this.data.goods
-        this.$nextTick(() => {
-          this._initScroll()
-          this._calculateHeight()
-        })
-        return goods
-      },
       currentIndex() {
         for (let i = 0; i < this.listHeight.length; i++) {
           let height1 = this.listHeight[i]
           let height2 = this.listHeight[i + 1]
-
           if (this.scrollY >= height1 && this.scrollY < height2) {
             return i + 1
           }
         }
         return 0
+      },
+      selectFoods() {
+        let foodList = []
+        this.goods.forEach((good) => {
+          good.foods.forEach((food) => {
+            if (food.count) {
+              foodList.push(food)
+            }
+          })
+        })
+        return foodList
       }
     },
     methods: {
