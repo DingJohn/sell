@@ -12,14 +12,14 @@
         <router-link to="/seller">商家</router-link>
       </div>
     </div>
-    <router-view></router-view>
+    <router-view :seller="seller"></router-view>
   </div>
 </template>
 
 <script>
 
   import httpAxios from './base/http/httpAxios'
-  import apiSell from './base/api/apiSell'
+  import apiModule from './base/api/apiModule'
   import Header from './components/header/Header'
 
   export default {
@@ -29,14 +29,13 @@
     },
     data() {
       return {
-        seller: 'loading'
+        seller: {}
       }
     },
     created() {
-      httpAxios(apiSell.getSell, {"srChannel": "h5",})
+      httpAxios(apiModule.getSell, {"srChannel": "h5",})
         .then((res) => {
-          this.seller = res.data.seller
-          console.log(res.data.seller)
+          this.seller = res
         }, (error) => {
           console.log(error)
         })
@@ -51,8 +50,8 @@
 
   .table
     display flex
-    widows: 100%
-    height: 40px
+    widows 100%
+    height 40px
     line-height 40px
     border-1px(rgba(7, 17, 27, .1))
     .table-item
