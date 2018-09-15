@@ -2,7 +2,7 @@
   <div class="shop-cart">
     <div class="content">
       <div class="content-left">
-        <div class="logo-wrapper">
+        <div class="logo-wrapper" @click="isShow">
           <div class="logo" :class="{ 'height-light': count > 0 }">
             <i class="icon-shopping_cart" :class="{ 'height-light': count > 0}"></i>
           </div>
@@ -15,10 +15,34 @@
         <div class="pay" :class="descClass">{{ priceDesc }}</div>
       </div>
     </div>
+    <div v-show="show" class="selected-food">
+      <div class="title-wrapper">
+        <div class="title">
+          <span>购物车</span>
+        </div>
+        <div class="empty" @click="empty">
+          <span>清空</span>
+        </div>
+      </div>
+      <div class="food-wrapper" ref="foodWrapper">
+        <ul>
+          <li class="food-li" v-for="food in selectFoods">
+            <span class="food-name">{{ food.name }}</span>
+            <span class="money-sign">¥</span>
+            <span class="food-price">{{ food.price }}</span>
+            <v-regulation class="food-regulation" :food="food"></v-regulation>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+
+  import BScorll from 'better-scroll'
+  import Regulation from '../regulation/Regulation'
+
   export default {
     name: "ShopCart",
     props: {
@@ -35,6 +59,14 @@
           ]
         }
       }
+    },
+    data() {
+      return {
+        show: false
+      }
+    },
+    components: {
+      'v-regulation': Regulation
     },
     computed: {
       totalPrice() {
@@ -67,11 +99,39 @@
           return `enough`
         }
       }
+    },
+    methods: {
+      isShow() {
+        this.show = !this.show
+        console.log(this.show)
+        if (this.show) {
+          let el = this.$refs.foodWrapper.getElementsByClassName("food-li")
+          let height = 40
+          for (let i = 0; i < el.length; i++) {
+            height += 48
+          }
+          if (height > 280) {
+            console.log(height)
+            new BScorll('.food-wrapper', {
+              click: true
+            })
+          }
+        }
+      },
+      empty() {
+        //此处要清除父组件了
+        this.selectFoods.forEach((food) => {
+          food.count = 0
+          this.show = false
+        })
+      }
     }
   }
 </script>
 
 <style lang="stylus">
+
+  @import "../../common/stylus/mixin.styl"
 
   .shop-cart
     left 0
@@ -155,5 +215,64 @@
           &.enough
             background rgb(0, 180, 60)
             color #fff
+    .selected-food
+      left 0
+      z-index -1
+      width 100%
+      bottom 48px
+      max-height 280px
+      position absolute
+      .title-wrapper
+        width 100%
+        height 40px
+        display flex
+        line-height 40px
+        background #f3f5f7
+        border-1px(rgba(7, 17, 27, .1))
+        .title
+          flex 1
+          padding 0 18px
+          font-size 14px
+          font-weight 200
+          display inline-block
+          color rgb(7, 17, 27)
+        .empty
+          padding 0 18px
+          font-size 12px
+          line-height 40px
+          color rgb(0, 160, 220)
+          display inline-block
+      .food-wrapper
+        padding 0 18px
+        background #fff
+        .food-li
+          height 48px
+          display flex
+          border-1px(rgba(7, 17, 27, .1))
+          .food-name
+            flex 1
+            padding 12px 0
+            font-size 14px
+            line-height 24px
+            color rgb(7, 17, 27)
+            display inline-block
+          .money-sign
+            padding 12px 0
+            font-size 10px
+            line-height 24px
+            padding-left 18px
+            display inline-block
+            color rgb(240, 20, 20)
+          .food-price
+            padding 12px 0
+            font-size 14px
+            font-weight 700
+            line-height 24px
+            padding-right 12px
+            display inline-block
+            color rgb(240, 20, 20)
+          .food-regulation
+            padding 12px 0
+            display inline-block
 
 </style>
