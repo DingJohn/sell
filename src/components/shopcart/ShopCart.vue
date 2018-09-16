@@ -119,7 +119,7 @@
         }
       },
       empty() {
-        //此处要清除父组件了
+        //此处要清除父组件了(但是为什么这种方式也行？？？)
         this.selectFoods.forEach((food) => {
           food.count = 0
           this.show = false
