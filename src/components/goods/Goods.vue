@@ -1,45 +1,48 @@
 <template>
-  <div class="goods">
-    <div class="left-wrapper" ref="menuWrapper">
-      <ul>
-        <li v-for="(item,index) in goods" class="item" :class="{ 'current':currentIndex === index }"
-            @click="selectMenu(index,$event)">
+  <div>
+    <div class="goods">
+      <div class="left-wrapper" ref="menuWrapper">
+        <ul>
+          <li v-for="(item,index) in goods" class="item" :class="{ 'current':currentIndex === index }"
+              @click="selectMenu(index,$event)">
           <span class="text border-1px">
             <span v-if="item.type > 0" class="icon" :class="classMap[item.type]"></span>
           {{ item.name }}</span>
-        </li>
-      </ul>
-    </div>
-    <div class="right-wrapper" ref="goodWrapper">
-      <ul>
-        <li v-for="goods in goods" class="item-goods">
-          <span class="goods-type">{{ goods.name }}</span>
-          <ul>
-            <li v-for="food in goods.foods" class="item-food">
-              <div class="food-left">
-                <img :src="food.icon" class="food-icon">
-              </div>
-              <div class="food-right">
-                <span class="food-name">{{ food.name }}</span>
-                <span v-show="food.description" class="food-description">{{ food.description }}</span>
-                <div class="sell-rating">
-                  <span class="sell-count">月售{{ food.sellCount }}份</span>
-                  <span class="rating">好评率{{ food.rating }}%</span>
+          </li>
+        </ul>
+      </div>
+      <div class="right-wrapper" ref="goodWrapper">
+        <ul>
+          <li v-for="goods in goods" class="item-goods">
+            <span class="goods-type">{{ goods.name }}</span>
+            <ul>
+              <li @click="checkFoodInfo(food,$event)" v-for="food in goods.foods" class="item-food">
+                <div class="food-left">
+                  <img :src="food.icon" class="food-icon">
                 </div>
-                <div class="food-price">
-                  <span class="money-sign">¥</span>
-                  <span class="current-price">{{ food.price }}</span>
-                  <span v-show="food.oldPrice" class="old-price">¥{{ food.oldPrice }}</span>
+                <div class="food-right">
+                  <span class="food-name">{{ food.name }}</span>
+                  <span v-show="food.description" class="food-description">{{ food.description }}</span>
+                  <div class="sell-rating">
+                    <span class="sell-count">月售{{ food.sellCount }}份</span>
+                    <span class="rating">好评率{{ food.rating }}%</span>
+                  </div>
+                  <div class="food-price">
+                    <span class="money-sign">¥</span>
+                    <span class="current-price">{{ food.price }}</span>
+                    <span v-show="food.oldPrice" class="old-price">¥{{ food.oldPrice }}</span>
+                  </div>
                 </div>
-              </div>
-              <v-regulation class="regulation" :food="food"></v-regulation>
-            </li>
-          </ul>
-        </li>
-      </ul>
+                <v-regulation class="regulation" :food="food"></v-regulation>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <v-shopCart :minPrice="seller.minPrice" :deliveryPrice="seller.deliveryPrice"
+                  :selectFoods="selectFoods"></v-shopCart>
     </div>
-    <v-shopCart :minPrice="seller.minPrice" :deliveryPrice="seller.deliveryPrice"
-                :selectFoods="selectFoods"></v-shopCart>
+    <v-foodInfo :food="selectedFood" ref="foodInfo"></v-foodInfo>
   </div>
 </template>
 
@@ -49,6 +52,7 @@
   import apiModule from '../../base/api/apiModule'
   import Regulation from '../regulation/Regulation'
   import ShopCart from '../shopcart/ShopCart'
+  import FoodInfo from '../foodInfo/FoodInfo'
   import BScroll from 'better-scroll'
 
   export default {
@@ -60,7 +64,8 @@
       return {
         goods: [],
         listHeight: [],
-        scrollY: 0
+        scrollY: 0,
+        selectedFood: {}
       }
     },
     created() {
@@ -78,7 +83,8 @@
     },
     components: {
       'v-regulation': Regulation,
-      'v-shopCart': ShopCart
+      'v-shopCart': ShopCart,
+      'v-foodInfo': FoodInfo
     },
     computed: {
       currentIndex() {
@@ -111,6 +117,13 @@
         }
         let element = this.$refs.goodWrapper.getElementsByClassName("item-goods")
         this.goodScroll.scrollToElement(element[index], 300)
+      },
+      checkFoodInfo(food, event) {
+        if (!event._constructed) {
+          return
+        }
+        this.selectedFood = food
+        this.$refs.foodInfo.showFoodInfo()
       },
       _initScroll() {
         // 初始化滚动效果
