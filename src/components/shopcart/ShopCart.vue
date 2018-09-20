@@ -1,46 +1,51 @@
 <template>
-  <div class="shop-cart">
-    <div class="content">
-      <div class="content-left">
-        <div class="logo-wrapper" @click="isShow">
-          <div class="logo" :class="{ 'height-light': count > 0 }">
-            <i class="icon-shopping_cart" :class="{ 'height-light': count > 0}"></i>
+  <div>
+    <div class="shop-cart">
+      <div class="content">
+        <div class="content-left">
+          <div class="logo-wrapper" @click="isShow">
+            <div class="logo" :class="{ 'height-light': count > 0 }">
+              <i class="icon-shopping_cart" :class="{ 'height-light': count > 0}"></i>
+            </div>
+            <div v-show="count > 0" class="count">{{ count }}</div>
           </div>
-          <div v-show="count > 0" class="count">{{ count }}</div>
+          <div class="price-wrapper" :class="{ 'height-light': count > 0 }">¥{{ totalPrice }}元</div>
+          <div class="desc-wrapper">另需配送费¥{{ this.deliveryPrice }}元</div>
         </div>
-        <div class="price-wrapper" :class="{ 'height-light': count > 0 }">¥{{ totalPrice }}元</div>
-        <div class="desc-wrapper">另需配送费¥{{ this.deliveryPrice }}元</div>
+        <div class="content-right" @click="pay">
+          <div class="pay" :class="descClass">{{ priceDesc }}</div>
+        </div>
       </div>
-      <div class="content-right">
-        <div class="pay" :class="descClass">{{ priceDesc }}</div>
-      </div>
+      <transition name="fade">
+        <div v-show="show" class="selected-food">
+          <div class="title-wrapper">
+            <div class="title">
+              <span>购物车</span>
+            </div>
+            <div class="empty" @click="empty">
+              <span>清空</span>
+            </div>
+          </div>
+          <div class="food-wrapper" ref="foodWrapper">
+            <ul>
+              <li class="food-li" v-for="food in selectFoods">
+                <span class="food-name">{{ food.name }}</span>
+                <span class="money-sign">¥</span>
+                <span class="food-price">{{ food.price }}</span>
+                <v-regulation class="food-regulation" :food="food"></v-regulation>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </transition>
     </div>
-    <div v-show="show" class="selected-food">
-      <div class="title-wrapper">
-        <div class="title">
-          <span>购物车</span>
-        </div>
-        <div class="empty" @click="empty">
-          <span>清空</span>
-        </div>
-      </div>
-      <div class="food-wrapper" ref="foodWrapper">
-        <ul>
-          <li class="food-li" v-for="food in selectFoods">
-            <span class="food-name">{{ food.name }}</span>
-            <span class="money-sign">¥</span>
-            <span class="food-price">{{ food.price }}</span>
-            <v-regulation class="food-regulation" :food="food"></v-regulation>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <div class="bg-ask" v-show="show" @click="hide"></div>
   </div>
 </template>
 
 <script>
 
-  import BScorll from 'better-scroll'
+  import BScroll from 'better-scroll'
   import Regulation from '../regulation/Regulation'
 
   export default {
@@ -102,20 +107,20 @@
     },
     methods: {
       isShow() {
+        if (!this.count) {
+          return this.show = false
+        }
         this.show = !this.show
-        console.log(this.show)
         if (this.show) {
-          let el = this.$refs.foodWrapper.getElementsByClassName("food-li")
-          let height = 40
-          for (let i = 0; i < el.length; i++) {
-            height += 48
-          }
-          if (height > 280) {
-            console.log(height)
-            new BScorll('.food-wrapper', {
-              click: true
-            })
-          }
+          this.$nextTick(() => {
+            if (!this.scroll) {
+              this.scroll = new BScroll(this.$refs.foodWrapper, {
+                click: true
+              })
+            } else {
+              this.scroll.refresh()
+            }
+          })
         }
       },
       empty() {
@@ -124,6 +129,15 @@
           food.count = 0
           this.show = false
         })
+      },
+      hide() {
+        this.show = false
+      },
+      pay() {
+        if (this.totalPrice < this.minPrice) {
+          return
+        }
+        window.alert('建设中，工期：遥遥无期...')
       }
     }
   }
@@ -220,7 +234,6 @@
       z-index -1
       width 100%
       bottom 48px
-      max-height 280px
       position absolute
       .title-wrapper
         width 100%
@@ -245,6 +258,8 @@
       .food-wrapper
         padding 0 18px
         background #fff
+        overflow hidden
+        max-height 217px
         .food-li
           height 48px
           display flex
@@ -274,5 +289,15 @@
           .food-regulation
             padding 12px 0
             display inline-block
+
+  .bg-ask
+    top 0
+    left 0
+    width 100%
+    height 100%
+    z-index 20px
+    position fixed
+    backdrop-filter blur(10px)
+    background rgba(7, 17, 27, .6)
 
 </style>
