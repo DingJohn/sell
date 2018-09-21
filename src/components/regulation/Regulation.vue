@@ -1,12 +1,12 @@
 <template>
   <div class="regulation">
     <transition name="move">
-      <div class="reduce" v-show="food.count" @click="reduceCount">
+      <div class="reduce" v-show="food.count" @click.stop="reduceCount">
         <span class="inner icon-remove_circle_outline"></span>
       </div>
     </transition>
     <span v-show="food.count" class="count">{{ food.count }}</span>
-    <i class="add icon-add_circle" @click="addCount"></i>
+    <i class="add icon-add_circle" @click.stop="addCount"></i>
   </div>
 </template>
 
