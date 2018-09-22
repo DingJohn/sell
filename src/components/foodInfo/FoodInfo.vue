@@ -35,7 +35,7 @@
         <div class="good-rarings-wrapper">
           <h1 class="title">商品评价</h1>
           <v-ratingsList :ratings="food.ratings" :ratingsCount="ratingsCount" :positiveCount="positiveCount"
-                         :negativeCount="negativeCount"
+                         :negativeCount="negativeCount" :checkText="false"
                          :titleDesc="{ all:'全部',positive:'推荐',negative:'吐槽' }"></v-ratingsList>
         </div>
       </div>
