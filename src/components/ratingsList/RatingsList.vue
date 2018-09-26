@@ -1,17 +1,17 @@
 <template>
   <div>
     <div class="good-ratings-label">
-      <div class="all-ratings" @click="selected(2,$event)">
+      <div class="all-ratings" @click="selected(2,$event)" :class="{'active': type === 2}">
         <span class="text">{{ titleDesc.all }}</span>
         <span class="num">{{ ratings.length }}</span>
       </div>
-      <div class="recommend-ratings" @click="selected(0,$event)">
+      <div class="recommend-ratings" @click="selected(0,$event)" :class="{'active': type === 0}">
         <span class="text">{{ titleDesc.positive }}</span>
-        <span class="num">{{ positiveCount.length }}</span>
+        <span class="num">{{ positive.length }}</span>
       </div>
-      <div class="bad-ratings" @click="selected(1,$event)">
+      <div class="bad-ratings" @click="selected(1,$event)" :class="{'active': type === 1}">
         <span class="text">{{ titleDesc.negative }}</span>
-        <span class="num">{{ negativeCount.length }}</span>
+        <span class="num">{{ negative.length }}</span>
       </div>
     </div>
     <div class="select-look-over" @click="checkContent">
@@ -60,8 +60,7 @@
         }
       },
       titleDesc: {
-        default
-          () {
+        default() {
           return {
             all: '全部',
             positive: '满意',
@@ -69,10 +68,11 @@
           }
         }
       }
-      ,
-      checkText: {
-        default:
-          false
+    },
+    data() {
+      return {
+        type: 2,
+        checkText: false
       }
     },
     methods: {
@@ -83,30 +83,21 @@
         if (!event._constructed) {
           return
         }
-        
+        this.type = type
       }
     },
     computed: {
       isChecked() {
         if (this.checkText) {
-          this.ratings = []
-          // 处理数据
-          this.ratings.forEach((rating) => {
-            if (!rating.text) {
-              this.ratings.push(rating)
-            }
-          })
           return 'current'
         }
-      }
-      ,
-      positiveCount() {
+      },
+      positive() {
         return this.ratings.filter((rating) => {
           return rating.rateType === POSITIVE
         })
-      }
-      ,
-      negativeCount() {
+      },
+      negative() {
         return this.ratings.filter((rating) => {
           return rating.rateType === NEGATIVE
         })
@@ -130,40 +121,31 @@
     margin 0 18px
     padding-bottom 18px
     border-1px(rgba(7, 17, 27, .1))
-    .all-ratings
-      color #fff
+    .all-ratings, .recommend-ratings, .bad-ratings
       padding 8px 12px
       border-radius 2px
       display inline-block
-      background rgb(0, 160, 220)
+      color rgb(77, 85, 93)
       .text
         font-size 12px
         padding-right 2px
       .num
         font-size 10px
+      &.active
+        color rgb(255, 255, 255)
+    .all-ratings
+      background rgba(0, 160, 220, .2)
+      &.active
+        background rgb(0, 160, 220)
     .recommend-ratings
       margin 0 8px
-      padding 8px 12px
-      border-radius 2px
-      display inline-block
-      color rgb(77, 85, 93)
       background rgba(0, 160, 220, .2)
-      .text
-        font-size 12px
-        padding-right 2px
-      .num
-        font-size 10px
+      &.active
+        background rgb(0, 160, 220)
     .bad-ratings
-      padding 8px 12px
-      border-radius 2px
-      display inline-block
-      color rgb(77, 85, 93)
       background rgba(77, 85, 93, .2)
-      .text
-        font-size 12px
-        padding-right 2px
-      .num
-        font-size 10px
+      &.active
+        background rgb(77, 85, 93)
 
   .select-look-over
     padding 12px 18px
@@ -173,7 +155,7 @@
       vertical-align top
       color rgb(147, 153, 159)
       &.current
-        color rgb(0, 160, 220)
+        color rgb(0, 200, 80)
     .select-desc
       font-size 12px
       vertical-align top
