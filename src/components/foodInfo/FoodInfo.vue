@@ -34,9 +34,7 @@
         <v-cutLine v-show="food.info"></v-cutLine>
         <div class="good-rarings-wrapper">
           <h1 class="title">商品评价</h1>
-          <v-ratingsList :ratings="food.ratings" :ratingsCount="ratingsCount" :positiveCount="positiveCount"
-                         :negativeCount="negativeCount" :checkText="false"
-                         :titleDesc="{ all:'全部',positive:'推荐',negative:'吐槽' }"></v-ratingsList>
+          <v-ratingsList :ratings="food.ratings" :checkText="false"></v-ratingsList>
         </div>
       </div>
     </div>
@@ -87,29 +85,6 @@
           return
         }
         Vue.set(this.food, 'count', 1)
-      }
-    },
-    computed: {
-      ratingsCount() {
-        return this.food.ratings.length
-      },
-      positiveCount() {
-        let count = 0
-        this.food.ratings.forEach((rating) => {
-          if (rating.rateType === 0) {
-            count++
-          }
-        })
-        return count
-      },
-      negativeCount() {
-        let count = 0
-        this.food.ratings.forEach((rating) => {
-          if (rating.rateType === 1) {
-            count++
-          }
-        })
-        return count
       }
     }
   }
