@@ -36,7 +36,7 @@
           <div class="detail-main">
             <h1>{{ seller.name }}</h1>
             <div class="star-wrapper">
-              <v-star :size="48" :score="seller.score"></v-star>
+              <v-star :size="36" :score="seller.score"></v-star>
             </div>
             <div v-if="seller.supports" class="title-wrapper">
               <div class="line"></div>
