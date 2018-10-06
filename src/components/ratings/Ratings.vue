@@ -11,14 +11,16 @@
           <div class="service-manner">
             <span class="title">服务态度</span>
             <v-star :size="36" :score="4"></v-star>
+            <span class="score">4分</span>
           </div>
           <div class="goods-grade">
             <span class="title">商品评分</span>
-            <v-star :size="36" :score="4"></v-star>
+            <v-star :size="36" :score="3"></v-star>
+            <span class="score">4分</span>
           </div>
           <div class="service-time">
             <span class="title">送达时间</span>
-            <span>44分钟</span>
+            <span class="time">44分钟</span>
           </div>
         </div>
       </div>
@@ -41,14 +43,13 @@
 <style lang="stylus">
 
   .ratings
-    width 100%
     padding 18px 24px
     .overview
       display flex
       .overview-left
         width 127px
         flex 0 0 127px
-        margin-right 24px
+        padding-right 24px
         text-align center
         .score
           font-size 24px
@@ -68,13 +69,23 @@
           color rgb(7, 17, 27)
       .overview-right
         flex 1
+        font-size 0
         padding-left 24px
         border-left 1px solid rgba(7, 17, 27, .1)
         .title
           font-size 12px
           font-weight 700
-          line-height 18px 
-          display inline-block
+          line-height 18px
+          padding-right 12px
           color rgb(7, 17, 27)
+        .score
+          font-size 12px
+          line-height 18px
+          color rgb(255, 153, 0)
+      .service-time
+        .time
+          font-size 12px
+          line-height 18px
+          color rgb(147, 153, 159)
 
 </style>
