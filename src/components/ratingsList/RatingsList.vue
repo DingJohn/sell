@@ -7,7 +7,7 @@
       <ul v-show="ratings && ratings.length">
         <li v-show="needShow(rating.rateType,rating.text)" class="rating-li" v-for="rating in ratings">
           <div class="time-user">
-            <span class="rating-time">{{ rating.rateTime | formatDate}} </span>
+            <span class="rating-time">{{ rating.rateTime | formatDate }} </span>
             <div class="user-icon">
               <span class="rating-user">{{ rating.username }}</span><img :src="rating.avatar">
             </div>
