@@ -97,9 +97,13 @@
     },
     mounted() {
       this.$nextTick(() => {
-          this.sellerScroll = new BScroll(this.$refs.sellerWrapper, {
-            click: true
-          })
+          if (this.sellerScroll) {
+            this.sellerScroll.refresh()
+          } else {
+            this.sellerScroll = new BScroll(this.$refs.sellerWrapper, {
+              click: true
+            })
+          }
         }
       )
       if (this.seller.pics) {
@@ -108,11 +112,15 @@
         let width = (picWidth + margin) * this.seller.pics.length - margin
         this.$refs.picList.style.width = width + 'px'
         this.$nextTick(() => {
-          this.picScroll = new BScroll(this.$refs.picWrapper, {
-            click: true,
-            scrollX: true,
-            eventPassthrough: 'vertical'
-          })
+          if (this.picScroll) {
+            this.picScroll.refresh()
+          } else {
+            this.picScroll = new BScroll(this.$refs.picWrapper, {
+              click: true,
+              scrollX: true,
+              eventPassthrough: 'vertical'
+            })
+          }
         })
       }
     },
